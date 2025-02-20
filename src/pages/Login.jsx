@@ -1,16 +1,29 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { login } from "../api/authApi";
 import { TextField, Button, Typography, Container, Box } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../features/auth/authSlice";
 
 const Login = () => {
+  const [userData,setUserData] = React.useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  //navigating after redux use effect is updates 
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
+  //handle redirect synchronously after redux state is updated
+  useEffect(() => {
+    if(isAuthenticated && user){
+      console.log("3",userData.user?.role)
+      userData.user?.role==="admin" ? navigate("/admin/product") : navigate("/");
+      // navigate(user.role==="admin" ? "/admin/product" : "/");
+    }
+  },[isAuthenticated,user,navigate,userData.user?.role])
+
+  console.log("loginnnnnnnnnnnn")
   const initialValues = {
     email: "",
     password: "",
@@ -24,12 +37,18 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const data = await login(values); // Call API
-      dispatch(loginSuccess(data)); // Store user in Redux
-      alert("Login Successful");
-      navigate("/profile"); // Redirect to Profile or Dashboard
+      setUserData(data);
+      console.log('1');
+       dispatch(loginSuccess(data)); // Store user in Redux
+       console.log('2');
+
+        // if(data.user?.role==='admin'){
+        //     navigate("/admin/product"); // Redirect to Profile or Dashboard
+        // }else{
+        //     navigate("/");
+        // }
     } catch (error) {
       console.error("Login Error:", error);
-      alert("Invalid email or password.");
     } finally {
       setSubmitting(false);
     }

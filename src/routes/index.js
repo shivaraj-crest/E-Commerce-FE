@@ -1,11 +1,11 @@
 import { lazy } from "react";
-import UserRoute from "./UserRoute";
 import AdminRoute from "./AdminRoute";
 
 
 //public imports
 const LazyRegister = lazy(() => import("../pages/Register"));
 const LazyLogin = lazy(() => import("../pages/Login"));
+const LazyUnauthorized = lazy(()=> import('../pages/Unauthorized'))
 // const LazyCart = lazy(() => import("../pages/Cart"));
 // const LazyUnauthorized = lazy(() => import("../pages/Unauthorized"));
 // const LazyLandingPage = lazy(() => import("../pages/landingPage"));
@@ -30,11 +30,10 @@ const LazyAdminProductEdit = lazy(() => import('../pages/admin/product/EditProdu
 
 
 // Categories Management
-// const LazyAdminCategoryList = lazy(() => import('./components/Admin/Category/CategoryList'));
-// const LazyAdminCategoryView = lazy(() => import('./components/Admin/Category/CategoryView'));
-// const LazyAdminCategoryCreate = lazy(() => import('./components/Admin/Category/CategoryCreate'));
-// const LazyAdminCategoryEdit = lazy(() => import('./components/Admin/Category/CategoryEdit'));
-// const LazyAdminCategoryDelete = lazy(() => import('./components/Admin/Category/CategoryDelete'));
+const LazyAdminCategoryList = lazy(() => import('../pages/admin/category/CategoryList'));
+const LazyAdminCategoryCreate = lazy(() => import('../pages/admin/category/CreateCategory'));
+const LazyAdminCategoryEdit = lazy(() => import('../pages/admin/category/EditCategory'));
+const LazyAdminCategoryView = lazy(() => import('../pages/admin/category/ViewCategory'));
 
 // // Brands Management
 // const LazyAdminBrandList = lazy(() => import('./components/Admin/Brand/BrandList'));
@@ -56,6 +55,7 @@ const LazyAdminProductEdit = lazy(() => import('../pages/admin/product/EditProdu
 const publicRoutes = [
     { path:"/register",  element:<LazyRegister/> },
     { path:"/login", element:<LazyLogin/> },
+    { path :"/unauthorized", element:<LazyUnauthorized/>}
     // { path: "/cart", element: <LazyCart /> },
     // { path: "/unauthorized", element: <LazyUnauthorized /> },
     // { path:"/", element:<LazyLandingPage/>},
@@ -77,19 +77,22 @@ const publicRoutes = [
 
 //Routes only for Admins
 const adminRoutes = [
-    //products management
-    { path: "/admin/product/list", element: <AdminRoute><LazyAdminProductList /></AdminRoute> },
-    { path: "/admin/product/view/:id", element: <AdminRoute><LazyAdminProductView /></AdminRoute> },
-    { path: "/admin/product/create", element: <AdminRoute><LazyAdminProductCreate /></AdminRoute> },
-    { path: "/admin/product/edit/:id", element: <AdminRoute><LazyAdminProductEdit /></AdminRoute> },
 
-    // //Categories Management
-    // { path:"/admin/category/list", element:<LazyAdminCategoryList/>},
-    // { path:"/admin/category/view/:id", element:<LazyAdminCategoryView/>},
-    // { path:"/admin/category/create", element:<LazyAdminCategoryCreate/>},
-    // { path:"/admin/category/edit/:id", element:<LazyAdminCategoryEdit/>},
-    // { path:"/admin/category/delete/:id", element:<LazyAdminCategoryDelete/>},
+    {
+        path: "/admin/*",
+        element: <AdminRoute/>,
+        children: [
+            { path: "product", element: <LazyAdminProductList /> },
+            { path: "product/view/:id", element: <LazyAdminProductView /> },
+            { path: "product/create", element: <LazyAdminProductCreate /> },
+            { path: "product/edit/:id", element: <LazyAdminProductEdit /> },
 
+            { path: "category/list", element: <LazyAdminCategoryList /> },
+            { path: "category/view/:id", element: <LazyAdminCategoryView /> },
+            { path: "category/create", element: <LazyAdminCategoryCreate /> },
+            { path: "category/edit/:id", element: <LazyAdminCategoryEdit /> },
+        ],
+    },
     // //Brands Management
     // { path: "/admin/brand/list", element:<LazyAdminBrandList/>},
     // { path:"/admin/brands/view/:id", element:<LazyAdminBrandView/>},

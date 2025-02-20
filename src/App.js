@@ -8,8 +8,14 @@ const App = () => {
     <Router>
       <Suspense fallback={<Loader />}>
         <Routes>
-          {allRoutes.map(({ path, element }) => (
-            <Route key={path} path={path} element={element} />
+          {allRoutes.map(({ path, element, children }) => (
+            <Route key={path} path={path} element={element}>
+              {children?.map(({ path, element }) => {
+                console.log("path",path);
+              
+                return <Route key={path} path={path} element={element} />
+})}
+            </Route>
           ))}
         </Routes>
       </Suspense>
