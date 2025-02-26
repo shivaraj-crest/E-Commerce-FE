@@ -1,18 +1,18 @@
 import React from "react";
-import { Pagination as MuiPagination } from "@mui/material";
+import TablePagination from "@mui/material/TablePagination";
 
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-
+const PaginationComponent = ({ count, page, rowsPerPage, onPageChange, onRowsPerPageChange }) => {
   return (
-    <MuiPagination
-      count={totalPages}
-      page={currentPage}
-      onChange={(event, value) => onPageChange(value)}
-      color="primary"
-      sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}
+    <TablePagination
+      className="pagination"
+      component="div"
+      count={count} // ✅ Total number of items
+      page={page} // ✅ Current page
+      onPageChange={onPageChange} // ✅ Handles page change
+      rowsPerPage={rowsPerPage} // ✅ Rows per page
+      onRowsPerPageChange={onRowsPerPageChange} // ✅ Handles rows per page change
     />
   );
 };
 
-export default Pagination;
+export default PaginationComponent;

@@ -1,15 +1,19 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import PaginationComponent from "../../../components/Pagination";
+
+//import redux prodcut actions
 import {
-  setProducts,
-  setCategories,
-  setBrands,
-  setSelectedCategory,
-  setSelectedBrand,
-  setSearchTerm,
-  setCurrentPage,
+  allProducts, allCategories, allBrands, stSearch, stCategory, stBrand, stCurrentPage,stRowsPerPage
 } from "../../../features/product/productSlice";
+
+//api imports
 import { getProducts } from "../../../api/productApi";
+import { getCategories } from "../../../api/categoryApi";
+import { getBrands } from "../../../api/brandApi";
+
+//mui imports
 import {
   TextField,
   MenuItem,
@@ -30,66 +34,127 @@ import {
   InputAdornment
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-
-import "../../../App.css"
+//main css imports
+import "../../../App.scss"
 
 
 const ProductList = () => {
+
   const dispatch = useDispatch();
-console.log("testing :::");
+
   // Get Redux state
   const {
     products,
     categories,
     brands,
+    searchQuery,
     selectedCategory,
     selectedBrand,
-    searchTerm,
     currentPage,
+    itemsPerPage,
+    totalProducts
   } = useSelector((state) => state.products);
-
-  // Function to fetch products
-  const fetchProducts = useCallback(async () => {
-    try {
   
-      const data = await getProducts(selectedCategory, selectedBrand, searchTerm, currentPage);
-      dispatch(setProducts(data));
-      console.log("bye",data)
-    } catch (error) {
-      console.error(error);
-    } 
-  }, []);
+  //Hooks
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const debounceTimeout = useRef(null);
 
-  // Fetch products initially
+  //runs only once for component mount
+  useEffect(()=>{
+    fetchCatgories();
+    fetchBrands();
+  },[])
+
+  // Fetch products initially and on state change
   useEffect(() => {
     console.log("hello1");
-    fetchProducts(); // ✅ Only runs once on mount
-  }, []); 
+    console.log("currentPage",currentPage, "itemsPerPage", itemsPerPage);
+    fetchProducts(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage); // ✅ Only runs once on mount
 
-  // 🔹 Handle search input change
+  }, [selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage]); 
+  
+  //debouncing the search in 
+  useEffect(() => {
+    //if the user types withing 1 second then we need to update the debounceTimeout.current
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
+    }
+
+    // Set a new timeout everytime when the user starts typing before 1 sec end
+    debounceTimeout.current = setTimeout(() => {
+      console.log("hello20")
+      dispatch(stSearch(localSearch)); // Dispatch the search action
+      // fetchProducts(searchTerm); // Optionally call the API here
+    }, 1000); // 1-second delay
+  }, [localSearch, dispatch]);
+
+
+
+
+  // Function to fetch products
+  const fetchProducts= async(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage) =>{
+    try {
+      // console.log(selectedCategory, selectedBrand, searchQuery, currentPage);
+      const productData = await getProducts(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage);
+      dispatch(allProducts(productData)); // ✅ Updates Redux state
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  //function to fetch categories
+  const fetchCatgories= async()=>{
+    try{
+      const categoryData = await getCategories();
+      dispatch(allCategories(categoryData));
+    }catch(error){
+      console.error(error);
+    }
+  }
+  //function to fetch brands
+  const fetchBrands= async()=>{
+    try{
+      const brandData = await getBrands();
+      dispatch(allBrands(brandData.brands));
+    }catch(error){
+      console.error(error);
+    }
+  }
+   
+
+//Event handler functions
+  // 🔹 Handle search input change, set localSearch and then run useEffect to set the state search
   const handleSearchChange = (e) => {
-    dispatch(setSearchTerm(e)); // ✅ Update Redux state
-    fetchProducts(); // ✅dispatch Manually call API
+    setLocalSearch(e)
   };
 
   // 🔹 Handle category selection
   const handleCategoryChange = (e) => {
-    dispatch(setSelectedCategory(e.target.value));
-    fetchProducts();
+    console.log(e.target.value);
+    dispatch(stCategory(e.target.value));
+    // fetchProducts();
   };
 
   // 🔹 Handle brand selection
   const handleBrandChange = (e) => {
-    dispatch(setSelectedBrand(e.target.value));
-    fetchProducts();
+    console.log(e.target.value);
+    dispatch(stBrand(e.target.value));
+    // fetchProducts();
   };
 
-  // 🔹 Handle pagination
-  const handlePageChange = (page) => {
-    dispatch(setCurrentPage(page));
-    fetchProducts();
+  //change page
+  const handleChangePage = (event, newPage) => {
+    dispatch(stCurrentPage(newPage)); // ✅ Updates Redux with the new page
+  };
+  
+  //change rows per page
+  const handleChangeRowsPerPage = (event) => {
+    dispatch(stRowsPerPage(parseInt(event.target.value, 10))); // ✅ Updates Redux with new rows per page
+    dispatch(stCurrentPage(1)); // ✅ Reset to first page
   };
 
+
+//ui
   return (
     <div>
       <h1>Products</h1>
@@ -99,7 +164,7 @@ console.log("testing :::");
             className='global-search-class'
             variant="outlined"
             placeholder='Search Contacts'
-            value={searchTerm}
+            value={localSearch}
             onChange={(e) => handleSearchChange(e.target.value)}
             sx={{
               // "& .MuiOutlinedInput-root": {
@@ -126,10 +191,16 @@ console.log("testing :::");
 
 
         {/* Category Filter */}
-        <FormControl fullWidth className="global-dropdown-class" sx={{ marginBottom: "16px"  }}>
-          <InputLabel>All Categories</InputLabel>
-          <Select value={selectedCategory} onChange={handleCategoryChange}>
-            <MenuItem value="">All Categories</MenuItem>
+        <FormControl fullWidth className="global-dropdown-class " sx={{ marginBottom: "16px"  }}>
+        {!selectedCategory ? <InputLabel  className="global-dropdownLabel">All Categories</InputLabel> : null}
+          <Select 
+          className="global-dropdown-input"
+          value={selectedCategory} 
+          onChange={handleCategoryChange}
+          inputProps={{ 'aria-label': 'Without label' }}
+          displayEmpty
+          >
+            {/* <MenuItem value="">All Category</MenuItem> */}
             {categories.map((category) => (
               <MenuItem key={category.id} value={category.id}>
                 {category.name}
@@ -140,9 +211,14 @@ console.log("testing :::");
 
         {/* Brand Filter */}
         <FormControl className="global-dropdown-class" fullWidth style={{ marginBottom: "16px" }}>
-          <InputLabel>All Brands</InputLabel>
-          <Select value={selectedBrand} onChange={handleBrandChange}>
-            <MenuItem value="">All Brands</MenuItem>
+        {!selectedBrand ? <InputLabel className="global-dropdownLabel">All Brands</InputLabel> : null}
+          <Select value={selectedBrand} 
+          onChange={handleBrandChange}
+          className="global-dropdown-input"
+          inputProps={{ 'aria-label': 'Without label' }}
+          displayEmpty
+          >
+            {/* <MenuItem value="">All Brands</MenuItem> */}
             {brands.map((brand) => (
               <MenuItem key={brand.id} value={brand.id}>
                 {brand.name}
@@ -154,8 +230,8 @@ console.log("testing :::");
 
 
       {/* Product Table */}
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer className="global-table-container" component={Paper}  > 
+        <Table className="global-table" aria-label="a dense table"  >
           <TableHead>
             <TableRow>
               <TableCell>No.</TableCell>
@@ -168,7 +244,7 @@ console.log("testing :::");
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.length > 0 ? (
+            {products?.length > 0 ? (
               products.map((product, index) => (
                 <TableRow key={product.id}>
                   <TableCell>{index + 1}</TableCell>
@@ -200,16 +276,16 @@ console.log("testing :::");
           </TableBody>
         </Table>
       </TableContainer>
+  
 
       {/* Pagination */}
-      <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-        <Button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)}>
-          Previous
-        </Button>
-        <Button disabled={products.length < 10} onClick={() => handlePageChange(currentPage + 1)}>
-          Next
-        </Button>
-      </div>
+      <PaginationComponent
+        count={totalProducts} // ✅ Total count of items (modify as per API)
+        page={currentPage}
+        rowsPerPage={itemsPerPage}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </div>
   );
 };

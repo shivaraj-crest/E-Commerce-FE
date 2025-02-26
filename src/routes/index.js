@@ -1,5 +1,4 @@
 import { lazy } from "react";
-import AdminRoute from "./AdminRoute";
 
 
 //public imports
@@ -52,7 +51,7 @@ const LazyAdminCategoryView = lazy(() => import('../pages/admin/category/ViewCat
 
 
 //Public Routes (No Login Required)
-const publicRoutes = [
+export const publicRoutes = [
     { path:"/register",  element:<LazyRegister/> },
     { path:"/login", element:<LazyLogin/> },
     { path :"/unauthorized", element:<LazyUnauthorized/>}
@@ -76,23 +75,17 @@ const publicRoutes = [
 // ]
 
 //Routes only for Admins
-const adminRoutes = [
+export const adminRoutes = [
+        { path: "product", element: <LazyAdminProductList /> },
+        { path: "product/view/:id", element: <LazyAdminProductView /> },
+        { path: "product/create", element: <LazyAdminProductCreate /> },
+        { path: "product/edit/:id", element: <LazyAdminProductEdit /> },
+      
+        { path: "category/list", element: <LazyAdminCategoryList /> },
+        { path: "category/view/:id", element: <LazyAdminCategoryView /> },
+        { path: "category/create", element: <LazyAdminCategoryCreate /> },
+        { path: "category/edit/:id", element: <LazyAdminCategoryEdit /> },
 
-    {
-        path: "/admin/*",
-        element: <AdminRoute/>,
-        children: [
-            { path: "product", element: <LazyAdminProductList /> },
-            { path: "product/view/:id", element: <LazyAdminProductView /> },
-            { path: "product/create", element: <LazyAdminProductCreate /> },
-            { path: "product/edit/:id", element: <LazyAdminProductEdit /> },
-
-            { path: "category/list", element: <LazyAdminCategoryList /> },
-            { path: "category/view/:id", element: <LazyAdminCategoryView /> },
-            { path: "category/create", element: <LazyAdminCategoryCreate /> },
-            { path: "category/edit/:id", element: <LazyAdminCategoryEdit /> },
-        ],
-    },
     // //Brands Management
     // { path: "/admin/brand/list", element:<LazyAdminBrandList/>},
     // { path:"/admin/brands/view/:id", element:<LazyAdminBrandView/>},
@@ -112,9 +105,5 @@ const adminRoutes = [
     // {path:"/admin/order/list", element:<LazyAdminOrderList/>},
 
 
-]
+];
 
-
-const allRoutes = [...publicRoutes,...adminRoutes]
-
-export default allRoutes;

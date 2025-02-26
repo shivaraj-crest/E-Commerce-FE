@@ -11,8 +11,12 @@ import {
   Box,
   Avatar,
   Typography,
-  CssBaseline
+  CssBaseline,
+  Divider,
+  IconButton,
+  Toolbar
 } from "@mui/material";
+import { styled, useTheme } from '@mui/material/styles';
 import {
   ExpandLess,
   ExpandMore,
@@ -24,9 +28,51 @@ import {
   ShoppingCart
 } from "@mui/icons-material";
 
+import MuiAppBar from '@mui/material/AppBar';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MenuIcon from '@mui/icons-material/Menu';
+
+
 const drawerWidth = 240;
 
+const AppBar = styled(MuiAppBar, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme }) => ({
+  transition: theme.transitions.create(['margin', 'width'], {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  variants: [
+    {
+      props: ({ open }) => open,
+      style: {
+        width: `calc(100% - ${drawerWidth}px)`,
+        marginLeft: `${drawerWidth}px`,
+        transition: theme.transitions.create(['margin', 'width'], {
+          easing: theme.transitions.easing.easeOut,
+          duration: theme.transitions.duration.enteringScreen,
+        }),
+      },
+    },
+  ],
+}));
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'flex-end',
+}));
+
+
+//component starting form here
 const AdminSidebar = () => {
+
+  const theme = useTheme();
+
   const location = useLocation();
   const [open, setOpen] = useState({
     products: true,
@@ -37,15 +83,52 @@ const AdminSidebar = () => {
     setOpen((prevState) => ({ ...prevState, [menu]: !prevState[menu] }));
   };
 
+
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+ 
+  
+
   return (
-    <Box sx={{ display: "flex" }}>
+    //if you don't give height 100vh then you won't get full height only the content height
+    <Box sx={{ display: "flex",height:"100vh" }}>
       <CssBaseline />
+
+      <AppBar position="fixed" open={open}>
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            sx={[
+              {
+                mr: 2,
+              },
+              open && { display: 'none' },
+            ]}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" noWrap component="div">
+            E-Commerce Admin Panel
+          </Typography>
+        </Toolbar>
+      </AppBar>
 
       {/* Sidebar */}
       <Drawer
-        variant="permanent"
+        variant="persistent"
+        anchor="left"
+        open={open}
         sx={{
-          width: drawerWidth,
+          width: open? drawerWidth:0,
+          transition: "width 0.3s ease-in-out",
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
@@ -53,9 +136,19 @@ const AdminSidebar = () => {
             backgroundColor: "#f8f9fa",
             borderRight: "1px solid #ddd",
             padding: "10px"
-          }
+          },
+          
         }}
       >
+        <DrawerHeader className="drawer-header" sx={{ minHeight : '54px'}}>
+          <Typography variant="h6" sx={{ textAlign:"center" }} >Ecommerce Logo</Typography>
+          <IconButton onClick={handleDrawerClose}>
+            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          </IconButton>
+        </DrawerHeader>
+
+        <Divider />
+
         <Box sx={{ p: 2, textAlign: "center" }}>
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             Admin Panel
@@ -133,7 +226,8 @@ const AdminSidebar = () => {
       </Drawer>
 
       {/* Main Content */}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box open={open} className="main-c" component="main" sx={{ p: 3 }}>
+        {/* <DrawerHeader /> */}
         <Outlet />
       </Box>
     </Box>

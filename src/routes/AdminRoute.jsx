@@ -30,7 +30,7 @@ const AdminRoute = () => {
   return  isVerified=== true ? (
     <div>
       <AdminSidebar />
-      <Outlet />
+      
     </div>
   ) : null;
 };
