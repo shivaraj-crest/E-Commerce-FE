@@ -1,14 +1,14 @@
 import { Backdrop, CircularProgress } from "@mui/material";
 
-const Loader = () => {
+const LoaderBackdrop = ({ open }) => {
   return (
     <Backdrop
       sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-      open={true}  // ✅ Always open for Suspense fallback
+      open={open}
     >
       <CircularProgress color="inherit" />
     </Backdrop>
   );
 };
 
-export default Loader;
+export default LoaderBackdrop;

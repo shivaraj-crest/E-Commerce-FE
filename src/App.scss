@@ -14,19 +14,41 @@
   padding-right: 0px !important;
   margin-left:auto;
   margin-right:auto;
+  padding-bottom: 0px;
+  height: 100vh;
+ /*to stretch the height of the container to full extent because for some reason height:100% not working cause of parent
+ height not being set properly or some other reason*/
+  // display: flex;
 
   .container-parent{
-  
     padding-top: 20px;
     margin-left: 0px;
     margin-right: 0px;
-    max-width: none;
+    max-width: none; 
+    padding-bottom:20px;
+ 
+    /* if height 100% doesnt work try to remove it and add flex and flex-direction column to stretch height size*/
+    // height: 100%;
+
+    .main-table-container{
+      max-width: unset;
+    }
   }
+
+  
+
   .container-child{
     width: 80%;
     margin-top: 45px;
+    min-height: 605px;
   }
 }
+
+// @media (min-width: 1200px){
+//   .container-parent{
+//     height: 100% !important;
+//   }
+// }
 
 /*Global Classes*/
 
@@ -52,8 +74,10 @@
 
 /*Main global class for dropdown*/
 .global-dropdown-class{
+  background-color: white;
   width: 296px;
   margin: 8px;
+  margin-left:0px;
 
    /* removing placeholder transform in dropdown */
   .MuiFormLabel-root{
@@ -88,17 +112,11 @@
 
 
 
-
-
-
-
-
-
-
-
 /*Global search class*/
 .global-search-class{
+  background-color: white;
   margin: 8px;
+  margin-left: 0px;
   input{
     height: 55px !important;
     width: 250px;
@@ -106,13 +124,24 @@
   
 }
 
-/*Global Table class*/
-.global-table{
-  width: 100%;
-  min-width: 855px;
+.main-table-container{
+  margin-left: 0px;
+  /*Global Table class*/
+  .global-table-container{
+    /*removing paper box-shadow*/
+    box-shadow:none;
+  
+    .global-table{
+      width: 100%;
+      min-width: 855px;
 
- 
-
+      .table-action-buttons{
+        display: flex; 
+        
+      }
+  
+    }
+  }
 }
 
 
@@ -124,6 +153,18 @@
 
   .MuiTablePagination-select{
     margin-right:auto;
+  }
+
+  .MuiToolbar-root{
+    flex: 1;
+    
+    p{
+      margin-bottom: 0px !important;
+    }
+
+    .MuiTablePagination-displayedRows{
+      margin-left: auto;
+    }
   }
 }
 

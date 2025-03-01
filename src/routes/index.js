@@ -77,14 +77,14 @@ export const publicRoutes = [
 //Routes only for Admins
 export const adminRoutes = [
         { path: "product", element: <LazyAdminProductList /> },
-        { path: "product/view/:id", element: <LazyAdminProductView /> },
+        { path: "product/:id/view", element: <LazyAdminProductView /> },
         { path: "product/create", element: <LazyAdminProductCreate /> },
-        { path: "product/edit/:id", element: <LazyAdminProductEdit /> },
+        { path: "product/:id/edit", element: <LazyAdminProductEdit /> },
       
         { path: "category/list", element: <LazyAdminCategoryList /> },
-        { path: "category/view/:id", element: <LazyAdminCategoryView /> },
+        { path: "category/:id/view", element: <LazyAdminCategoryView /> },
         { path: "category/create", element: <LazyAdminCategoryCreate /> },
-        { path: "category/edit/:id", element: <LazyAdminCategoryEdit /> },
+        { path: "category/:id/edit", element: <LazyAdminCategoryEdit /> },
 
     // //Brands Management
     // { path: "/admin/brand/list", element:<LazyAdminBrandList/>},

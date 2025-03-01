@@ -31,4 +31,40 @@ export const createProducts = async(formData) =>{
     } catch (error) {
         throw error;
     }   
-}
+};
+
+export const editProduct = async (id, formData) => {
+    try {
+        const response = await axiosInstance.put(`/product/edit`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+
+export const getProductById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/product/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+//IMPORTANT in delete send id as params and not as body as delete doesn't accept any 
+//any other way
+export const deleteProduct = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/product/delete`, {
+            params: { id }  // ✅ Pass ID correctly in params
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
