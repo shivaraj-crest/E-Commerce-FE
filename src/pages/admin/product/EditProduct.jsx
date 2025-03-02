@@ -27,7 +27,7 @@ import {
 import "../../../App.scss";
 import "../../../styles/productCss.scss";
 import React from "react";
-import BackdropLoader from "../../../components/BackdropLoader";
+import BackdropLoader from "../../../components/LoaderBackdrop";
 
 const EditProduct = () => {
   const dispatch = useDispatch();

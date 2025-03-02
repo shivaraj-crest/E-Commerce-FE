@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Outlet, useLocation, Link } from "react-router-dom";
+import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Drawer,
   List,
@@ -27,12 +27,15 @@ import {
   People,
   ShoppingCart
 } from "@mui/icons-material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCopyright } from "@fortawesome/free-solid-svg-icons";
 
 import MuiAppBar from '@mui/material/AppBar';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MenuIcon from '@mui/icons-material/Menu';
-
+import LogoutIcon from "@mui/icons-material/Logout";
+import DeleteDialog from "../components/DeleteDialog";
 
 const drawerWidth = 240;
 
@@ -73,7 +76,10 @@ const AdminSidebar = () => {
 
   const theme = useTheme();
 
+  const navigate = useNavigate();
   const location = useLocation();
+
+  const [openDialog, setOpenDialog] = useState(false);
   const [open, setOpen] = useState({
     products: true,
     categories: true
@@ -92,10 +98,18 @@ const AdminSidebar = () => {
     setOpen(false);
   };
  
+
+  //logout funciton
+  const handleSignOut = ()=>{
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true });
+    window.location.reload();
+  }
   
 
   return (
-    //if you don't give height 100vh then you won't get full height only the content height
+    //if you don't give height 100vh then the scrollbar look above navbar which we don't want
     <Box sx={{ display: "flex",height:"100vh" }}>
       <CssBaseline />
 
@@ -179,24 +193,20 @@ const AdminSidebar = () => {
 
           {/* Categories */}
           <ListItem disablePadding>
-            <ListItemButton onClick={() => handleClick("categories")}>
+            <ListItemButton component={Link} to="/admin/category/list" selected={location.pathname === "/admin/category/list"}>
               <ListItemIcon><Category /></ListItemIcon>
               <ListItemText primary="Categories" />
-              {open.categories ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
           </ListItem>
-          <Collapse in={open.categories} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItemButton component={Link} to="/admin/category/create" selected={location.pathname === "/admin/category/create"}>
-                <ListItemIcon><Add /></ListItemIcon>
-                <ListItemText primary="Create Category" />
-              </ListItemButton>
-              <ListItemButton component={Link} to="/admin/category/list" selected={location.pathname === "/admin/category/list"}>
-                <ListItemIcon><ListIcon /></ListItemIcon>
-                <ListItemText primary="Category List" />
-              </ListItemButton>
-            </List>
-          </Collapse>
+        
+
+          {/*Brands*/}
+          <ListItem disablePadding>
+            <ListItemButton sx={{ ml :"4px"}} component={Link} to="/admin/brand/list" selected={location.pathname === "/admin/brand/list"}>
+              <ListItemIcon><FontAwesomeIcon icon={faCopyright} /></ListItemIcon>
+              <ListItemText primary="Brands" />
+            </ListItemButton>
+          </ListItem>
 
           {/* Users */}
           <ListItem disablePadding>
@@ -216,14 +226,52 @@ const AdminSidebar = () => {
         </List>
 
         {/* Profile Section at the Bottom */}
-        <Box sx={{ position: "absolute", bottom: 20, left: 16, display: "flex", alignItems: "center", gap: 2 }}>
+        <Box sx={{ position: "absolute", bottom: 60, left: 20, display: "flex", alignItems: "center", gap: 2 }}>
           <Avatar alt="Admin" src="https://via.placeholder.com/40" />
           <Box>
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>Admin</Typography>
             <Typography variant="body2" color="textSecondary">admin@gmail.com</Typography>
           </Box>
         </Box>
+        
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={1} // Spacing between icon and text
+          p={1} // Padding inside the box
+          sx={{
+            position: "absolute",
+            bottom: 10,
+            left:15,
+
+            cursor: "pointer",
+            borderRadius: "5px",
+            transition: "0.3s",
+            pointerEvents: "cursor",
+            "&:hover": { backgroundColor: "#f0f0f0" }, // Light hover effect
+          }}
+          onClick={() => setOpenDialog(true)} // Replace with actual sign-out logic
+        >
+          <IconButton size="small">
+            <LogoutIcon />
+          </IconButton>
+          <Typography variant="body1" fontWeight="bold">
+            Sign Out
+          </Typography>
+        </Box>
+
       </Drawer>
+
+      <DeleteDialog
+        open={openDialog}
+        title={`Are you sure you want to sigh out?`} 
+        content={`Are you sure you want to sign out?
+Signing out will end your current session and require you to log in again.`}
+        confirmText="Sign Out"
+        cancelText="Cancel"
+        onConfirm={handleSignOut}
+        onCancel={() => setOpenDialog(false)}
+      /> 
 
       {/* Main Content */}
       <Box open={open} className="main-c" component="main" sx={{ p: 3 }}>

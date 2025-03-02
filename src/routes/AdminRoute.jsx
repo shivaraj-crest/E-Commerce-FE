@@ -1,11 +1,9 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AdminSidebar from "../layouts/AdminSidebar";
 import { AdminVerify } from "../api/authApi";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 
 const AdminRoute = () => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   const [isVerified, setIsVerified] = useState(null); // Store verification status
   const navigate = useNavigate();

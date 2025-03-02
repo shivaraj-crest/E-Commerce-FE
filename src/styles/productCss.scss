@@ -8,16 +8,19 @@
 
 .product-listing{
     padding-top:40px !important;
+    align-self: flex-start !important;
 }
 
 
-/* View-product*/
-.view-product{
-    width: 100% !important;
-}
+
 
 .view-product-container-parent{
     display: flex;
+    align-self: flex-start;
+    /* View-product*/
+    .view-product{
+        width: 100% !important;
+    }
 }
 
 

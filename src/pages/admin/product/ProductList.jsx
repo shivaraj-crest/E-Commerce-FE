@@ -12,7 +12,7 @@ import {
 import { deleteProduct, getProducts } from "../../../api/productApi";
 import { getCategories } from "../../../api/categoryApi";
 import { getBrands } from "../../../api/brandApi";
-
+import LoaderBackdrop from "../../../components/LoaderBackdrop";
 //mui imports
 import {
   TextField,
@@ -68,6 +68,8 @@ const ProductList = () => {
   //to store the selected product id and value
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+
   const debounceTimeout = useRef(null);
 
   const location = useLocation(); // Get the current page route
@@ -118,11 +120,14 @@ const ProductList = () => {
   // Function to fetch products
   const fetchProducts= async(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage) =>{
     try {
+      setLoading(true); 
       // console.log(selectedCategory, selectedBrand, searchQuery, currentPage);
       const productData = await getProducts(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage);
       dispatch(allProducts(productData)); // ✅ Updates Redux state
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -207,9 +212,10 @@ const ProductList = () => {
     navigate(`/admin/product/${id}/view`);
   }
 
+  if (loading) return <LoaderBackdrop  open={loading} />;
 //ui
   return (
-    <Container className="container-parent product-listing" sx={{ backgroundColor: "#8080800f"}}>
+    <Container className="container-parent product-listing" sx={{ }}>
         <h1>Products</h1>
         <Box className="filter-class" sx={{ mb: 2 }}>
           <TextField

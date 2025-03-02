@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Typography, Stack, Box, Container } from "@mui/material";
-import BackdropLoader from "../../../components/BackdropLoader"; // Import Loader
+import BackdropLoader from "../../../components/LoaderBackdrop"; // Import Loader
 import axiosInstance from "../../../api/axiosConfig"; // Axios Instance
 import "../../../App.scss"
 import "../../../styles/productCss.scss"
@@ -128,7 +128,7 @@ const ProductDetails = () => {
                     variant="contained"
                     color="primary"
                     sx={{ mt: 3 }}
-                    onClick={() => navigate(`/admin/edit-product/${product.id}`)}
+                    onClick={() => navigate(`/admin/product/${product.id}/edit`)}
                     >
                     Edit Product Details
                     </Button>

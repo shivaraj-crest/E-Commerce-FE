@@ -30,12 +30,12 @@ const LazyAdminProductEdit = lazy(() => import('../pages/admin/product/EditProdu
 
 // Categories Management
 const LazyAdminCategoryList = lazy(() => import('../pages/admin/category/CategoryList'));
-const LazyAdminCategoryCreate = lazy(() => import('../pages/admin/category/CreateCategory'));
-const LazyAdminCategoryEdit = lazy(() => import('../pages/admin/category/EditCategory'));
-const LazyAdminCategoryView = lazy(() => import('../pages/admin/category/ViewCategory'));
+// const LazyAdminCategoryCreate = lazy(() => import('../pages/admin/category/CreateCategory'));
+// const LazyAdminCategoryEdit = lazy(() => import('../pages/admin/category/EditCategory'));
+// const LazyAdminCategoryView = lazy(() => import('../pages/admin/category/ViewCategory'));
 
 // // Brands Management
-// const LazyAdminBrandList = lazy(() => import('./components/Admin/Brand/BrandList'));
+const LazyAdminBrandList = lazy(() => import('../pages/admin/brand/BrandList'));
 // const LazyAdminBrandView = lazy(() => import('./components/Admin/Brand/BrandView'));
 // const LazyAdminBrandCreate = lazy(() => import('./components/Admin/Brand/BrandCreate'));
 // const LazyAdminBrandEdit = lazy(() => import('./components/Admin/Brand/BrandEdit'));
@@ -82,12 +82,12 @@ export const adminRoutes = [
         { path: "product/:id/edit", element: <LazyAdminProductEdit /> },
       
         { path: "category/list", element: <LazyAdminCategoryList /> },
-        { path: "category/:id/view", element: <LazyAdminCategoryView /> },
-        { path: "category/create", element: <LazyAdminCategoryCreate /> },
-        { path: "category/:id/edit", element: <LazyAdminCategoryEdit /> },
+        // { path: "category/:id/view", element: <LazyAdminCategoryView /> },
+        // { path: "category/create", element: <LazyAdminCategoryCreate /> },
+        // { path: "category/:id/edit", element: <LazyAdminCategoryEdit /> },
 
     // //Brands Management
-    // { path: "/admin/brand/list", element:<LazyAdminBrandList/>},
+        { path: "brand/list", element:<LazyAdminBrandList/>},
     // { path:"/admin/brands/view/:id", element:<LazyAdminBrandView/>},
     // { path:"/admin/brands/view/:id", element:<LazyAdminBrandCreate/>},
     // { path: "/admin/brand/edit/:id", element:<LazyAdminBrandEdit/>},

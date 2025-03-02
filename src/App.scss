@@ -15,7 +15,9 @@
   margin-left:auto;
   margin-right:auto;
   padding-bottom: 0px;
-  height: 100vh;
+  background-color: #8080800f;
+  //to set the full height of the container
+  display: flex;
  /*to stretch the height of the container to full extent because for some reason height:100% not working cause of parent
  height not being set properly or some other reason*/
   // display: flex;
@@ -26,7 +28,7 @@
     margin-right: 0px;
     max-width: none; 
     padding-bottom:20px;
- 
+    align-self: flex-start;
     /* if height 100% doesnt work try to remove it and add flex and flex-direction column to stretch height size*/
     // height: 100%;
 
@@ -169,3 +171,10 @@
 }
 
 
+
+/*settings search class*/
+.settings-search-field{
+  .MuiInputBase-input{
+    width: 274px;
+  }
+}

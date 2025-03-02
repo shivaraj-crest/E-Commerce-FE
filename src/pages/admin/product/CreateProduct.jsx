@@ -14,7 +14,7 @@ import {
 
 import "../../../styles/productCss.scss";
 import "../../../App.scss"
-
+import LoaderBackdrop from "../../../components/LoaderBackdrop";
 
 const CreateProduct = () => {
   const dispatch = useDispatch();
@@ -22,6 +22,7 @@ const CreateProduct = () => {
 
   const [openSnackBar, setOpenSnackBar] = useState(false);
 
+  const [loading,setLoading] = useState(true);
   //for setting file inputs value and to remove it after the form is submitted
   const fileInputRef = useRef(null);
   //redux state
@@ -42,6 +43,8 @@ const CreateProduct = () => {
         dispatch(allCategories(categoryData));
       }catch(error){
         console.error(error);
+      }finally{
+        setLoading(false);
       }
     }
 
@@ -52,6 +55,8 @@ const CreateProduct = () => {
         dispatch(allBrands(brandData.brands));
       }catch(error){
         console.error(error);
+      }finally{
+        setLoading(false);
       }
     }
 
@@ -125,6 +130,8 @@ const CreateProduct = () => {
     if (reason === "clickaway") return;
     setOpenSnackBar(false);
   };
+
+  if (loading) return <LoaderBackdrop  open={loading} />;
 
   return (
     <Container className="container-parent" sx={{ backgroundColor: "#8080800f"}}>
