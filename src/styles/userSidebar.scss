@@ -1,0 +1,41 @@
+.userSidebar-drawer-main{
+
+
+    .profile-section{
+        margin-top: auto;
+    }
+
+    .userSidebar-Main-List{
+        flex:1;
+        overflow: auto;
+        margin-bottom: 22px;
+        scrollbar-width: thin;
+        // .MuiListItem-root{
+        //     padding-left:8px;
+        // }
+    
+        .userSidebar-collapse{
+            .userSidebar-list-item{
+                padding-left: 7px !important;
+            }
+        
+            .userSidebar-list{
+                display: flex;
+                flex-direction: column;
+                align-items:center;
+        
+                .MuiSlider-root{
+                    width: 130px;
+                }
+            }
+        
+            .rating-list{
+                flex-direction: row;
+                padding-left: 7px;
+            }
+        }
+    }
+}
+
+
+

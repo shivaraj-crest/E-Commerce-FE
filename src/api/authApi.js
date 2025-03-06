@@ -38,3 +38,14 @@ export const AdminVerify = async()=>{
         throw error;
     }
 }
+
+export const UserVerify = async(id)=>{
+    try{
+        const response = await axiosInstance.get("/auth/user",{
+            params:{id}
+        });
+        return response;    
+    }catch(error){   
+        throw error;
+    }
+}

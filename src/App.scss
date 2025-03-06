@@ -46,6 +46,12 @@
   }
 }
 
+//userSidebar
+// .user_sidebar-main{
+//   flex: 1;
+
+// }
+
 // @media (min-width: 1200px){
 //   .container-parent{
 //     height: 100% !important;
@@ -77,10 +83,10 @@
 /*Main global class for dropdown*/
 .global-dropdown-class{
   background-color: white;
-  width: 296px;
-  margin: 8px;
-  margin-left:0px;
-
+  width: 300px !important;
+  margin: 8px !important;
+  margin-top: 0px !important;
+  margin-left: 0px !important;
    /* removing placeholder transform in dropdown */
   .MuiFormLabel-root{
     -webkit-transform: translate(14px, 16px) scale(1) !important;
@@ -119,6 +125,7 @@
   background-color: white;
   margin: 8px;
   margin-left: 0px;
+  margin-right: 10px !important;
   input{
     height: 55px !important;
     width: 250px;

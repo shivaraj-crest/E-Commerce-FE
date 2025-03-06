@@ -95,7 +95,7 @@ const ProductList = () => {
 
   // Fetch products initially and on state change
   useEffect(() => {
-    fetchProducts(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage); // ✅ Only runs once on mount
+    fetchProducts(); // ✅ Only runs once on mount
 
   }, [selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage]); 
   
@@ -118,11 +118,12 @@ const ProductList = () => {
 
 
   // Function to fetch products
-  const fetchProducts= async(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage) =>{
+  const fetchProducts= async() =>{
     try {
       setLoading(true); 
       // console.log(selectedCategory, selectedBrand, searchQuery, currentPage);
-      const productData = await getProducts(selectedCategory, selectedBrand, searchQuery, currentPage, itemsPerPage);
+      const newPage =currentPage+1;
+      const productData = await getProducts(selectedCategory, selectedBrand,[],null, searchQuery, newPage, itemsPerPage);
       dispatch(allProducts(productData)); // ✅ Updates Redux state
     } catch (error) {
       console.error(error);
@@ -173,6 +174,7 @@ const ProductList = () => {
 
   //change page
   const handleChangePage = (event, newPage) => {
+    console.log("hello page change?",newPage)
     dispatch(stCurrentPage(newPage)); // ✅ Updates Redux with the new page
   };
   
@@ -305,7 +307,7 @@ const ProductList = () => {
               {products?.length > 0 ? (
                 products.map((product, index) => (
                   <TableRow key={product.id}>
-                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{((currentPage*itemsPerPage)+index + 1)}</TableCell>
                     <TableCell>
                       <img src={product.images[0]} alt={product.name} width="50" />
                     </TableCell>

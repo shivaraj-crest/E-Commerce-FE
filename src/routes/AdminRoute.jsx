@@ -12,6 +12,7 @@ const AdminRoute = () => {
       try {
         await AdminVerify();
         setIsVerified(true);
+        console.log("hello admin")
       } catch (error) {
         // If verification fails, remove user data, dispatch logout, and redirect
         localStorage.removeItem("token");
@@ -28,7 +29,6 @@ const AdminRoute = () => {
   return  isVerified=== true ? (
     <div>
       <AdminSidebar />
-      
     </div>
   ) : null;
 };

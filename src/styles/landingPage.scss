@@ -1,0 +1,37 @@
+.landing-container{
+    flex: 1;
+    align-self: unset;
+ 
+
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+    padding-top: 0px !important;
+
+
+    .carousal-buttons-end{
+        justify-content: end;
+        padding-right: 5px;
+    }
+
+    .carousal-buttons-start{
+        justify-content: left;
+        padding-left:5px;
+    }
+    .carousal-buttons-icon{
+
+        background-color: black;
+        border-radius: 10px;
+    }
+
+    .landing-box-container{
+        max-width: none;
+        padding: 0px !important;
+        .landing-brand-card{
+            width: 170px;
+        }
+
+    }
+
+
+    
+}

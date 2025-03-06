@@ -8,22 +8,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginSuccess } from "../features/auth/authSlice";
 
 const Login = () => {
-  const [userData,setUserData] = React.useState({});
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
   //navigating after redux use effect is updates 
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user,role } = useSelector((state) => state.auth);
 
   //handle redirect synchronously after redux state is updated
   useEffect(() => {
     if(isAuthenticated && user){
-      console.log("3",userData.user?.role)
-      userData.user?.role==="admin" ? navigate("/admin/product") : navigate("/");
+      // console.log("3",userData.user?.role)
+      console.log("Login page userEffect running")
+      navigate(role === "admin" ? "/admin/product" : "/user/home");
       // navigate(user.role==="admin" ? "/admin/product" : "/");
     }
-  },[isAuthenticated,user,navigate,userData.user?.role])
+  },[isAuthenticated,user,role]);
 
-  console.log("loginnnnnnnnnnnn")
   const initialValues = {
     email: "",
     password: "",
@@ -37,7 +37,6 @@ const Login = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const data = await login(values); // Call API
-      setUserData(data);
       console.log('1');
        dispatch(loginSuccess(data)); // Store user in Redux
        console.log('2');

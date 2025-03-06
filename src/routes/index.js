@@ -49,12 +49,34 @@ const LazyAdminBrandList = lazy(() => import('../pages/admin/brand/BrandList'));
 // // Orders Management
 // const LazyAdminOrderList = lazy(() => import('./components/Admin/Order/OrderList'));
 
+//USER ROUTES
+
+const LazyUserCart = lazy(() => import('../pages/user/Cart'));
+const LazyUserLandingPage = lazy(() => import('../pages/user/LandingPage'));
+const LazyUserProductListing = lazy(() => import('../pages/user/UserProductListing'));
+const lazyUserViewProduct = lazy(()=> import('../pages/user/UserViewProduct'));
+const LazyUserOrders = lazy(() => import('../pages/user/userOrders'));
+
+
+export const userRoutes = [
+    { path:"home", element:<LazyUserLandingPage/>},
+    { path:"products", element:<LazyUserProductListing/>},
+    { path:"product/:id/view", element:<lazyUserViewProduct/>},
+    { path:"cart/:userId/view", element:<LazyUserCart/>},
+    { path:"orders", element:<LazyUserOrders/>},
+
+]
+
+
+
+
+
 
 //Public Routes (No Login Required)
 export const publicRoutes = [
     { path:"/register",  element:<LazyRegister/> },
     { path:"/login", element:<LazyLogin/> },
-    { path :"/unauthorized", element:<LazyUnauthorized/>}
+    { path :"*", element:<LazyUnauthorized/>}
     // { path: "/cart", element: <LazyCart /> },
     // { path: "/unauthorized", element: <LazyUnauthorized /> },
     // { path:"/", element:<LazyLandingPage/>},
@@ -106,4 +128,7 @@ export const adminRoutes = [
 
 
 ];
+
+
+
 

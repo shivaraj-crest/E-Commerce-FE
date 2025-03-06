@@ -1,7 +1,10 @@
 import { Typography, Container, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const Unauthorized = () => (
+const Unauthorized = () => {
+  const navigate = useNavigate();
+  
+  return (
   <Container sx={{ textAlign: "center", mt: 10 }}>
     <Typography variant="h4" gutterBottom>
       403 - Access Denied
@@ -9,10 +12,10 @@ const Unauthorized = () => (
     <Typography variant="body1" gutterBottom>
       You do not have permission to access this page.
     </Typography>
-    <Button component={Link} to="/" variant="contained" sx={{ mt: 2 }}>
-      Go to Home
+    <Button  onClick={() => navigate(-1, { replace: true })} variant="contained" sx={{ mt: 2 }}>
+      Go Back
     </Button>
   </Container>
-);
-
+  );
+};
 export default Unauthorized;
