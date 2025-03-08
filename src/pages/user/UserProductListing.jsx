@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { getProducts } from "../../api/productApi"; // API handler function
 import {
@@ -27,6 +27,7 @@ import {
 //css imports
 import "../../styles/userProductCss.scss";
 import "../../App.scss";
+import { addToCart, getCart } from "../../api/cartApi";
 
 
 
@@ -34,6 +35,8 @@ import "../../App.scss";
 
 // Product Listing Component
 const ProductListing = () => {
+  //for mutations necessary
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -49,10 +52,14 @@ const ProductListing = () => {
   } = useSelector((state) => state.products);
 
   //local state
-  const [localSearch, setLocalSearch] = useState(filterSearch || ""); // ✅ Local Input State
+  const [localSearch, setLocalSearch] = useState(filterSearch); // ✅ Local Input State
 
   //for resetting debounce time every time the user types
   const debounceTimeout = useRef(null);
+
+  useEffect(()=>{
+    console.log("hello i'm running and i shoudn't run")
+  }, [])
  
   //debouncing useEffect for search
   useEffect(() => {
@@ -63,9 +70,11 @@ const ProductListing = () => {
     debounceTimeout.current = setTimeout(() => {
       dispatch(stUserSearch(localSearch)); // ✅ Dispatch Redux Search after 1s delay
     }, 1000);
-
+    
     return () => clearTimeout(debounceTimeout.current); // ✅ Cleanup timeout
   }, [localSearch, dispatch]);
+
+
   
 
   //tans stack query functions -
@@ -84,7 +93,15 @@ const ProductListing = () => {
     return tanProducts;
   };
 
-  // API Call using TanStack Query
+
+
+  //post cart items api call
+  const callcreateCartItems = async (product_id)=>{
+    const tanCartItems = await addToCart(product_id);
+    return tanCartItems;
+  }
+
+  // get fetch Products  using TanStack Query
   const {
     data: products,
     isLoading,
@@ -94,6 +111,25 @@ const ProductListing = () => {
     queryKey: ["products", filterCategory, filterBrand, filterPriceRange, filterRatings, filterSearch, userCurrentPage], // ✅ Add dependencies
     queryFn: callFetchProducts,
   });
+
+ 
+  //post cart Mutation for adding cart item
+  const createCartMutation = useMutation({
+    mutationFn: callcreateCartItems,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cartItems"]);
+      // setCategoryName("");
+    },
+  });
+
+
+
+  //mutation handler function
+  const handleAddToCart = (product_id) => {
+    createCartMutation.mutate(product_id);
+  };
+
+
 
   //handler funcions
   const handlePageChange = (newPage) => {
@@ -187,7 +223,7 @@ const ProductListing = () => {
           All Products
         </Typography>
         <Typography sx={{marginLeft:"auto", marginRight:"10px"}} variant="body1">{products?.length} Products</Typography>
-        <Button variant="outlined">Sort by</Button>
+        <Button sx={{marginRight:"12px"}} variant="outlined">Sort by</Button>
       </Box>
 
       {/* Product Grid */}
@@ -207,7 +243,9 @@ const ProductListing = () => {
             sx={{
               width: { xs: "100%", sm: "48%", md: "31%", lg: "23%" }, // Responsive width
               display: "flex",
+              cursor:"pointer",
             }}
+            onClick={() => navigate(`/user/product/${product.id}/view`)}
           >
             <Card
               sx={{ width: "100%", display: "flex", flexDirection: "column" }}
@@ -258,7 +296,13 @@ const ProductListing = () => {
                   </Typography>
                 </Box>
                
-                <Button variant="contained" fullWidth sx={{ mt: 2 }}>
+                <Button 
+                  onClick={(event) => {
+                    event.stopPropagation(); // ✅ Stops navigation from triggering
+                    handleAddToCart(product.id);
+                  }} 
+                  variant="contained" 
+                  fullWidth sx={{ mt: 2 }}>
                   Add to cart
                 </Button>
               </CardContent>

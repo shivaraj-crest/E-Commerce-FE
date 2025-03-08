@@ -18,6 +18,7 @@ import {
   Checkbox,
   Slider,
   Button,
+  Badge,
 } from "@mui/material";
 
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
@@ -68,6 +69,7 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import "../styles/userSidebar.scss"
 import "../App.scss"
 import "../styles/productCss.scss"
+import { getCart } from "../api/cartApi";
 
 const drawerWidth = 270;
 
@@ -139,6 +141,14 @@ const callFetchBrands = async () => {
 };
 
 
+//get fetch for cart items
+const callFetchCartItems = async ()=>{
+  const tanCartItems = await getCart();
+
+  return tanCartItems.cartProducts;
+}
+
+
 
 
 //component starting form here
@@ -185,7 +195,17 @@ const AdminSidebar = () => {
         queryFn: callFetchBrands,
     });
 
-
+  //tsq cart items
+  //get fetch Cart Items using tq
+  const {
+    data:cartItems = [],
+    isLoading:cartLoading,
+    isError:cartError,
+    // refetch:cartRefetch, // ✅ Allows manual refetching
+  } = useQuery({
+    queryKey:["cartItems"],
+    queryFn:callFetchCartItems
+  })
       
 
 
@@ -247,6 +267,10 @@ const AdminSidebar = () => {
   };
   
   
+  //handle navigation - 
+  const handleNavigation = () => {
+    navigate('/user/home');
+  };
 
   return (
     //if you don't give height 100vh then the scrollbar look above navbar which we don't want
@@ -270,10 +294,21 @@ const AdminSidebar = () => {
             <MenuIcon />
           </IconButton>
 
-           <img src={shopperLogo} alt="Logo" style={{ height: 40, marginRight: 10 }} /> 
-          <Typography variant="h6" noWrap component="div">
-            Shoppers
-          </Typography>
+          <img 
+            src={shopperLogo}
+            onClick={handleNavigation}
+            alt="Logo"
+            style={{ height: 40, marginRight: 10, cursor: 'pointer' }} // Added cursor pointer for better UX
+          />
+          <Typography 
+            variant="h6" 
+            noWrap 
+            component="div"
+            onClick={handleNavigation}
+            sx={{ cursor: 'pointer' }} // Added cursor pointer for better UX
+          >
+        Shoppers
+      </Typography>
 
          {/* Middle: Navigation Links */}
         <Box sx={{ display: "flex", gap: 3, marginLeft: "auto" }}>
@@ -292,9 +327,26 @@ const AdminSidebar = () => {
         </Box>
 
         {/* Right Side: Cart Icon */}
-        <IconButton sx={{marginLeft:"10px"}} component={Link} to="/cart" color="inherit">
-          <ShoppingCartIcon />
-        </IconButton>  
+        <IconButton
+          sx={{ marginLeft: "10px" }}
+          component={Link}
+          to="/cart"
+          color="inherit"
+        >
+              <Badge
+                badgeContent={cartItems.length} // ✅ Number of items in cart
+                color="error" // ✅ Red badge for visibility
+                sx={{
+                  "& .MuiBadge-badge": {
+                    color: "white", // ✅ White text inside badge
+                    backgroundColor: "#ff3d00", // ✅ Bright red for visibility
+                    fontSize: "0.75rem", // ✅ Slightly smaller font
+                  },
+                }}
+              >
+            <ShoppingCartIcon />
+          </Badge>
+        </IconButton> 
 
         </Toolbar>
       </AppBar>
