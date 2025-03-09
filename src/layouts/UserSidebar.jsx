@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Drawer,
@@ -70,6 +70,8 @@ import "../styles/userSidebar.scss"
 import "../App.scss"
 import "../styles/productCss.scss"
 import { getCart } from "../api/cartApi";
+
+const userId = localStorage.getItem("user");
 
 const drawerWidth = 270;
 
@@ -181,6 +183,10 @@ const AdminSidebar = () => {
   const name = localStorage.getItem("name");
   const email = localStorage.getItem("email");
 
+  useEffect(()=>{
+    console.log("hello shivaraj")
+  },[])
+ 
 
   //tan stack queries brand
 
@@ -193,6 +199,7 @@ const AdminSidebar = () => {
     const { data: allBrands, isLoading: isLoadingBrands, isError: isErrorBrands } = useQuery({
         queryKey: ["brands"],
         queryFn: callFetchBrands,
+          
     });
 
   //tsq cart items
@@ -330,7 +337,7 @@ const AdminSidebar = () => {
         <IconButton
           sx={{ marginLeft: "10px" }}
           component={Link}
-          to="/cart"
+          to={`/user/cart/${userId}/view`} // ✅ Dynamic route with userId
           color="inherit"
         >
               <Badge
@@ -448,15 +455,15 @@ const AdminSidebar = () => {
             <List className="userSidebar-list" component="div" disablePadding>
 
                 <Slider
-                textAlign="center"
+               
                 value={filterPriceRange}
                 onChange={handlePriceChange}
                 valueLabelDisplay="auto"
                 min={0}
                 max={10000}
                 />
-                <Box textAlign="center">Selected Price Range: </Box>
-                <Box textAlign="center">${filterPriceRange[0]} - ${filterPriceRange[1]}</Box>
+                <Box >Selected Price Range: </Box>
+                <Box >${filterPriceRange[0]} - ${filterPriceRange[1]}</Box>
 
             </List>
           </Collapse>

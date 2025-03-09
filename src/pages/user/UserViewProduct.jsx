@@ -8,8 +8,11 @@ import BackdropLoader from "../../components/LoaderBackdrop"; // Replace with ac
 
 import "../../App.scss"
 import "../../styles/productCss.scss"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addToCart } from "../../api/cartApi";
 
-const ViewProduct = ({ addToCart }) => { // Add 'addToCart' function as prop
+const ViewProduct = ( ) => { // Add 'addToCart' function as prop
+  const queryClient = useQueryClient();
   const { id } = useParams(); 
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
@@ -30,6 +33,44 @@ const ViewProduct = ({ addToCart }) => { // Add 'addToCart' function as prop
     };
     fetchProduct();
   }, [id]);
+
+
+  //api call functions
+
+    //post cart items api call
+    const callcreateCartItems = async (product_id,value)=>{
+      console.log("hello cart")
+      const tanCartItems = await addToCart(product_id,value);
+      return tanCartItems;
+    }
+
+  
+
+
+  //mutation
+  //post cart Mutation for adding cart item
+  const createCartMutation = useMutation({
+    mutationFn: callcreateCartItems,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["cartItems"], { exact: true });
+      
+      // setCategoryName("");
+    },
+  });
+
+
+
+  //handler function 
+  
+  //mutation handler function
+  const handleAddToCart = (product_id) => {
+    console.log("hello cart")
+    createCartMutation.mutate(product_id,1);
+  };
+
+
+
+
 
   if (loading) return <BackdropLoader open={loading} />;
 
@@ -120,13 +161,14 @@ const ViewProduct = ({ addToCart }) => { // Add 'addToCart' function as prop
                 </Typography>
 
                 {/* ✅ Add to Cart Button (Replaces Edit Product Button) */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 3 }}
-                  onClick={() => addToCart(product)} // Trigger addToCart function
-                >
-                  Add to Cart
+                <Button 
+                  onClick={(event) => {
+                    event.stopPropagation(); // ✅ Stops navigation from triggering
+                    handleAddToCart(product.id);
+                  }} 
+                  variant="contained" 
+                  fullWidth sx={{ mt: 2 }}>
+                  Add to cart
                 </Button>
               </Box>
             </Stack>

@@ -57,21 +57,22 @@ const ProductListing = () => {
   //for resetting debounce time every time the user types
   const debounceTimeout = useRef(null);
 
-  useEffect(()=>{
-    console.log("hello i'm running and i shoudn't run")
-  }, [])
  
   //debouncing useEffect for search
   useEffect(() => {
-    if (debounceTimeout.current) {
-      clearTimeout(debounceTimeout.current);
-    }
+    // if(localSearch!==filterSearch){
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current);
+      }
+  
+      debounceTimeout.current = setTimeout(() => {
+        dispatch(stUserSearch(localSearch)); // ✅ Dispatch Redux Search after 1s delay
+      }, 1000);
+      
+      return () => clearTimeout(debounceTimeout.current); // ✅ Cleanup timeout
+    // }
 
-    debounceTimeout.current = setTimeout(() => {
-      dispatch(stUserSearch(localSearch)); // ✅ Dispatch Redux Search after 1s delay
-    }, 1000);
-    
-    return () => clearTimeout(debounceTimeout.current); // ✅ Cleanup timeout
+  
   }, [localSearch, dispatch]);
 
 
@@ -96,8 +97,8 @@ const ProductListing = () => {
 
 
   //post cart items api call
-  const callcreateCartItems = async (product_id)=>{
-    const tanCartItems = await addToCart(product_id);
+  const callcreateCartItems = async (product_id,value)=>{
+    const tanCartItems = await addToCart(product_id,value);
     return tanCartItems;
   }
 
@@ -107,6 +108,7 @@ const ProductListing = () => {
     isLoading,
     isError,
     refetch, // ✅ Allows manual refetching
+    
   } = useQuery({
     queryKey: ["products", filterCategory, filterBrand, filterPriceRange, filterRatings, filterSearch, userCurrentPage], // ✅ Add dependencies
     queryFn: callFetchProducts,
@@ -117,7 +119,8 @@ const ProductListing = () => {
   const createCartMutation = useMutation({
     mutationFn: callcreateCartItems,
     onSuccess: () => {
-      queryClient.invalidateQueries(["cartItems"]);
+      queryClient.invalidateQueries(["cartItems"], { exact: true });
+      
       // setCategoryName("");
     },
   });
@@ -126,14 +129,14 @@ const ProductListing = () => {
 
   //mutation handler function
   const handleAddToCart = (product_id) => {
-    createCartMutation.mutate(product_id);
+    createCartMutation.mutate(product_id,1);
   };
 
 
 
   //handler funcions
   const handlePageChange = (newPage) => {
-    console.log("laskdfjaskldjf",newPage)
+   
     dispatch(stUserCurrentPage(newPage));  // Update Redux state for pagination
   };
 

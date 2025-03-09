@@ -1,9 +1,9 @@
 import axiosInstance from "./axiosConfig";
 
 // ✅ Get Cart Items
-export const getCart = async () => {
+export const getCart = async (id) => {
   try {
-    const response = await axiosInstance.get("/cart/");
+    const response = await axiosInstance.get("/cart/",{id});
     return response.data; // Return cart data
   } catch (error) {
     throw error;
@@ -11,9 +11,9 @@ export const getCart = async () => {
 };
 
 // ✅ Add Product to Cart
-export const addToCart = async (product_id) => {
+export const addToCart = async (product_id,value) => {
   try {
-    const response = await axiosInstance.post("/cart/add", { product_id }); // Send product_id in body
+    const response = await axiosInstance.post("/cart/add", { product_id,value }); // Send product_id in body
     return response.data; // Return response data
   } catch (error) {
     throw error;
