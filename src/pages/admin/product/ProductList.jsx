@@ -9,7 +9,7 @@ import {
 } from "../../../features/product/productSlice";
 
 //api imports
-import { deleteProduct, getProducts } from "../../../api/productApi";
+import { deleteProduct, getProducts, getProductsAdmin } from "../../../api/productApi";
 import { getCategories } from "../../../api/categoryApi";
 import { getBrands } from "../../../api/brandApi";
 import LoaderBackdrop from "../../../components/LoaderBackdrop";
@@ -123,7 +123,7 @@ const ProductList = () => {
       setLoading(true); 
       // console.log(selectedCategory, selectedBrand, searchQuery, currentPage);
       const newPage =currentPage+1;
-      const productData = await getProducts(selectedCategory, selectedBrand,[],null, searchQuery, newPage, itemsPerPage);
+      const productData = await getProductsAdmin(selectedCategory, selectedBrand,[],null, searchQuery, newPage, itemsPerPage,null);
       dispatch(allProducts(productData)); // ✅ Updates Redux state
     } catch (error) {
       console.error(error);

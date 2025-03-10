@@ -15,13 +15,18 @@ import {
   Pagination,
   TextField,
   InputAdornment,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft,faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft,faMagnifyingGlass,faArrowUpWideShort,faCircleDot } from "@fortawesome/free-solid-svg-icons";
 
 import {
   stUserCurrentPage,
   stUserSearch,
+  stSort
 } from "../../features/product/productSlice";
 
 //css imports
@@ -48,18 +53,19 @@ const ProductListing = () => {
     filterRatings,
     userCurrentPage,
     userItemsPerPage,
-    filterSearch
+    filterSearch,
+    sort
   } = useSelector((state) => state.products);
 
   //local state
   const [localSearch, setLocalSearch] = useState(filterSearch); // ✅ Local Input State
-
   //for resetting debounce time every time the user types
   const debounceTimeout = useRef(null);
 
  
   //debouncing useEffect for search
   useEffect(() => {
+
     // if(localSearch!==filterSearch){
       if (debounceTimeout.current) {
         clearTimeout(debounceTimeout.current);
@@ -75,6 +81,21 @@ const ProductListing = () => {
   
   }, [localSearch, dispatch]);
 
+  //dropdown menu setup - 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // ✅ Open menu
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // ✅ Close menu & Dispatch sort value
+  const handleClose = (sortValue) => {
+    setAnchorEl(null);
+    dispatch(stSort(sortValue)); // ✅ Pass 1 for High->Low, 0 for Low->High
+    
+  };
+
 
   
 
@@ -89,7 +110,7 @@ const ProductListing = () => {
       filterSearch,
       userCurrentPage,
       userItemsPerPage,
-      
+      sort
     );
     return tanProducts;
   };
@@ -97,8 +118,8 @@ const ProductListing = () => {
 
 
   //post cart items api call
-  const callcreateCartItems = async (product_id,value)=>{
-    const tanCartItems = await addToCart(product_id,value);
+  const callcreateCartItems = async (body)=>{
+    const tanCartItems = await addToCart(body);
     return tanCartItems;
   }
 
@@ -110,7 +131,7 @@ const ProductListing = () => {
     refetch, // ✅ Allows manual refetching
     
   } = useQuery({
-    queryKey: ["products", filterCategory, filterBrand, filterPriceRange, filterRatings, filterSearch, userCurrentPage], // ✅ Add dependencies
+    queryKey: ["products", filterCategory, filterBrand, filterPriceRange, filterRatings, filterSearch, userCurrentPage,sort], // ✅ Add dependencies
     queryFn: callFetchProducts,
   });
 
@@ -129,7 +150,7 @@ const ProductListing = () => {
 
   //mutation handler function
   const handleAddToCart = (product_id) => {
-    createCartMutation.mutate(product_id,1);
+    createCartMutation.mutate({product_id,value:1});
   };
 
 
@@ -225,8 +246,47 @@ const ProductListing = () => {
         <Typography variant="h5" fontWeight="bold">
           All Products
         </Typography>
-        <Typography sx={{marginLeft:"auto", marginRight:"10px"}} variant="body1">{products?.length} Products</Typography>
-        <Button sx={{marginRight:"12px"}} variant="outlined">Sort by</Button>
+        <Typography sx={{marginLeft:"auto", marginRight:"10px"}} variant="body1">  {products?.totalProducts ? `${products.totalProducts} Products` : "Loading..."}</Typography>
+        {/* 🔹 Sort Button */}
+      <Button 
+        sx={{ marginRight: "12px" }} 
+        variant="outlined"
+        onClick={handleClick} // ✅ Opens Dropdown
+      >
+        <FontAwesomeIcon icon={faArrowUpWideShort} style={{ marginRight: "8px" }} />
+        Sort by
+      </Button>
+
+      {/* 🔹 Dropdown Menu */}
+      <Menu 
+        anchorEl={anchorEl} 
+        open={Boolean(anchorEl)} 
+        onClose={() => handleClose(null)}
+      >
+        {/* 🔹 Clear Sorting Option */}
+        <MenuItem onClick={() => handleClose(null)}>
+          <ListItemIcon>
+            {sort === null && <FontAwesomeIcon icon={faCircleDot} size="sm" />} {/* ✅ Show dot if selected */}
+          </ListItemIcon>
+          <ListItemText>Clear Sorting</ListItemText>
+        </MenuItem>
+
+        {/* 🔹 Price: High to Low */}
+        <MenuItem onClick={() => handleClose(1)}>
+          <ListItemIcon>
+            {sort === 1 && <FontAwesomeIcon icon={faCircleDot} size="sm" />} {/* ✅ Show dot if selected */}
+          </ListItemIcon>
+          <ListItemText>Price: High to Low</ListItemText>
+        </MenuItem>
+
+        {/* 🔹 Price: Low to High */}
+        <MenuItem onClick={() => handleClose(0)}>
+          <ListItemIcon>
+            {sort === 0 && <FontAwesomeIcon icon={faCircleDot} size="sm" />} {/* ✅ Show dot if selected */}
+          </ListItemIcon>
+          <ListItemText>Price: Low to High</ListItemText>
+        </MenuItem>
+      </Menu>
       </Box>
 
       {/* Product Grid */}

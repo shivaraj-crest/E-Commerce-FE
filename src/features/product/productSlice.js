@@ -12,6 +12,7 @@ const initialState = {
   itemsPerPage: 10,
   totalProducts:0,
 
+
   //user products
   filterCategory:[],
   filterBrand:[],
@@ -19,7 +20,8 @@ const initialState = {
   filterRatings:0,
   filterSearch:"",
   userCurrentPage:1,
-  userItemsPerPage:9
+  userItemsPerPage:9,
+  sort:null,
 
 };
 
@@ -119,6 +121,9 @@ const productSlice = createSlice({
       state.filterPriceRange = [0, 10000];
       state.filterRatings = 0;
       state.userCurrentPage = 1;
+    },
+    stSort:(state,action)=>{
+      state.sort=action.payload;
     }
     
   },
@@ -141,7 +146,8 @@ export const {
   stFilterRatings, 
   stUserCurrentPage,
   stUserSearch,
-  stClearFilters
+  stClearFilters,
+  stSort
  } =
   productSlice.actions;
 export default productSlice.reducer;

@@ -11,9 +11,10 @@ export const getCart = async (id) => {
 };
 
 // ✅ Add Product to Cart
-export const addToCart = async (product_id,value) => {
+export const addToCart = async (body) => {
   try {
-    const response = await axiosInstance.post("/cart/add", { product_id,value }); // Send product_id in body
+    console.log("boddddddyyyy",body)
+    const response = await axiosInstance.post("/cart/add", body); // Send product_id in body
     return response.data; // Return response data
   } catch (error) {
     throw error;

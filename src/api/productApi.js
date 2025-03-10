@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosConfig";
 
-export const getProducts = async (category_id, brand_id, price_range,  ratings, search, page, limit) => {
+export const getProducts = async (category_id, brand_id, price_range,  ratings, search, page, limit,sort) => {
     try {
         
         console.log("helooooo Page",page)
@@ -12,7 +12,30 @@ export const getProducts = async (category_id, brand_id, price_range,  ratings, 
                 search: search || undefined,
                 page: page || 1, // Default to page 1
                 limit: limit || 10, //Default to 10 items per page
-                ratings: ratings || undefined
+                ratings: ratings || undefined,
+                sort: sort
+            }
+        });
+        return response.data; //Extract and return data
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getProductsAdmin = async (category_id, brand_id, price_range,  ratings, search, page, limit,sort) => {
+    try {
+        
+        console.log("helooooo Page",page)
+        const response = await axiosInstance.get("/product/", {
+            params: {  //Dynamically pass query parameters
+                category_id: category_id ||undefined,
+                brand_id: brand_id ||undefined,
+                price_range: price_range? price_range.join(",") : undefined,
+                search: search || undefined,
+                page: page || 1, // Default to page 1
+                limit: limit || 10, //Default to 10 items per page
+                ratings: ratings || undefined,
+                sort: sort || undefined
             }
         });
         return response.data; //Extract and return data

@@ -38,9 +38,9 @@ const ViewProduct = ( ) => { // Add 'addToCart' function as prop
   //api call functions
 
     //post cart items api call
-    const callcreateCartItems = async (product_id,value)=>{
+    const callcreateCartItems = async (body)=>{
       console.log("hello cart")
-      const tanCartItems = await addToCart(product_id,value);
+      const tanCartItems = await addToCart(body);
       return tanCartItems;
     }
 
@@ -53,7 +53,7 @@ const ViewProduct = ( ) => { // Add 'addToCart' function as prop
     mutationFn: callcreateCartItems,
     onSuccess: () => {
       queryClient.invalidateQueries(["cartItems"], { exact: true });
-      
+      // refetch();
       // setCategoryName("");
     },
   });
@@ -65,7 +65,7 @@ const ViewProduct = ( ) => { // Add 'addToCart' function as prop
   //mutation handler function
   const handleAddToCart = (product_id) => {
     console.log("hello cart")
-    createCartMutation.mutate(product_id,1);
+    createCartMutation.mutate({product_id,value:1});
   };
 
 
